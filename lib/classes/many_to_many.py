@@ -1,10 +1,10 @@
 class Article:
-    articles = []
+    all = []
     def __init__(self, author, magazine, title):
         self.author = author
         self.magazine = magazine
         self.title = title
-        Article.articles.append(self)
+        Article.all.append(self)
     def __repr__(self):
         return f"Article(author={self.author}, magazine={self.magazine}, title={self.title})"
 
@@ -47,14 +47,14 @@ class Author:
         self.name = name
 
     def __repr__(self):
-        return f"Author(name={self.name})"
+        return f"Author(name={self.name}"
 
     def articles(self):
-        return[article.title for article in Article.articles if article.author == self]
+        return[article for article in Article.all if article.author == self]
         
 
     def magazines(self):
-        return list(set([article.magazine for article in Article.articles if article.author == self]))
+        return list(set([article.magazine for article in Article.all if article.author == self]))
 
     def add_article(self, magazine, title):
         ##Article is author, magazine, title
@@ -65,7 +65,12 @@ class Author:
         
 
     def topic_areas(self):
-        return list(set([article.magazine.category for article in Article.articles if article.author == self]))
+        topics = [article.magazine.category for article in Article.all if article.author == self]
+        if len(topics) > 0:
+            return list(set(topics))
+        else:
+            return None
+        
         
 
     @property
@@ -89,31 +94,45 @@ class Magazine:
         return f"Magazine(name={self.name}, category={self.category})"
 
     def articles(self):
-        return [article for article in Article.articles if article.magazine == self]
+        return [article for article in Article.all if article.magazine == self]
 
     def contributors(self):
-        return list(set(article.author for article in Article.articles if article.magazine == self))
+        return list(set(article.author for article in Article.all if article.magazine == self))
 
     def article_titles(self):
-        if len(Article.articles)>0:
-            return [article.title for article in Article.articles if article.magazine == self]
+        titles = [article.title for article in Article.all if article.magazine == self]
+        if len(titles)>0:
+            return titles
         else:
             return None
         
 
     def contributing_authors(self):
-        authors = list(set(article.author for article in Article.articles if article.magazine == self))
+        authors = list(set([article.author for article in Article.all if article.magazine == self]))
+        authors_list = list([article.author for article in Article.all if article.magazine == self])
         contributing_authors = []
         for author in authors:
-            if len([article for article in Article.articles if article.magazine == self and article.author == author]) > 2:
+            author_count = authors_list.count(author)
+            if author_count > 2:
                 contributing_authors.append(author)
-        if len(contributing_authors) > 0:
+        if len(contributing_authors)>0:
             return contributing_authors
         else:
             return None
 
+        # contributing_authors = [author for author in authors if author.count>2]
+        # print(authors)
+        # contributing_authors = []
+        # for author in authors:
+        #     if len([article for article in Article.all if article.magazine == self and article.author == author]) > 2:
+        #         contributing_authors.append(author)
+        # if len(contributing_authors) > 0:
+        #     return contributing_authors
+        # else:
+        #     return None
+
     def top_publisher(self):
-        articles = list(article.author.name for article in Article.articles if article.magazine == self)
+        articles = list(article.author.name for article in Article.all if article.magazine == self)
         return max(articles)
                 
 
